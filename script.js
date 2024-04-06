@@ -47,42 +47,84 @@ d3.csv("assets/passwords.csv").then
 //#region KEYBOARD VIS
 
 const kbLayout = [
-  ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '+', '='],
-  ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
-  ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '{', '}'],
-  ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ':', ';'],
-  ['z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '<', '>', '?', '/']
+  [{char1: '1', char2: '!'}, 
+  {char1: '2', char2: '@'},
+  {char1: '3', char2: '#'},
+  {char1: '4', char2: '$'},
+  {char1: '5', char2: '%'},
+  {char1: '6', char2: '^'},
+  {char1: '7', char2: '&'},
+  {char1: '8', char2: '*'},
+  {char1: '9', char2: '('},
+  {char1: '0', char2: ')'},
+  {char1: '-', char2: '_'},
+  {char1: '=', char2: '+'}],
+
+  [{char1: 'q', char2: 'Q'}, 
+  {char1: 'w', char2: 'W'},
+  {char1: 'e', char2: 'E'},
+  {char1: 'r', char2: 'R'},
+  {char1: 't', char2: 'T'},
+  {char1: 'y', char2: 'Y'},
+  {char1: 'u', char2: 'U'},
+  {char1: 'i', char2: 'I'},
+  {char1: 'o', char2: 'O'},
+  {char1: 'p', char2: 'P'},
+  {char1: '[', char2: '{'},
+  {char1: ']', char2: '}'}],
+
+  [{char1: 'a', char2: 'A'}, 
+  {char1: 's', char2: 'S'},
+  {char1: 'd', char2: 'D'},
+  {char1: 'f', char2: 'F'},
+  {char1: 'g', char2: 'G'},
+  {char1: 'h', char2: 'H'},
+  {char1: 'j', char2: 'J'},
+  {char1: 'k', char2: 'K'},
+  {char1: 'l', char2: 'L'},
+  {char1: ';', char2: ':'}],
+
+  [{char1: 'z', char2: 'Z'}, 
+  {char1: 'x', char2: 'X'},
+  {char1: 'c', char2: 'C'},
+  {char1: 'v', char2: 'V'},
+  {char1: 'b', char2: 'B'},
+  {char1: 'n', char2: 'N'},
+  {char1: 'm', char2: 'M'},
+  {char1: ',', char2: '<'},
+  {char1: '.', char2: '>'},
+  {char1: '/', char2: '?'}]
+  
 ];
 
 const kbContainer = document.createElement('div');
 kbContainer.className = 'keyboard';
-kbLayout.forEach((row, rowIndex) => {
+
+kbLayout.forEach(row => {
   const rowDiv = document.createElement('div');
   rowDiv.className = 'keyboard-row';
-  row.forEach(char => {
+  row.forEach(key => {
     const keyDiv = document.createElement('div');
-    const upperDiv = document.createElement('div');
-    const lowerDiv = document.createElement('div');
+    const char1Div = document.createElement('div');
+    const char2Div = document.createElement('div');
 
     keyDiv.className = 'keyboard-key';
-    upperDiv.className = 'upper-case';
-    lowerDiv.className = 'lower-case';
+    char1Div.className = 'char1';
+    char2Div.className = 'char2';
 
-    const upperChar = char.toUpperCase();
-    const lowerChar = char.toLowerCase();
+    char1Div.id = encodeCharForId(key.char1);
+    char2Div.id = encodeCharForId(key.char2);
 
-    upperDiv.id = encodeCharForId(upperChar);
-    lowerDiv.id = encodeCharForId(lowerChar);
+    char1Div.textContent = key.char1;
+    char2Div.textContent = key.char2;
 
-    upperDiv.textContent = upperChar;
-    lowerDiv.textContent = lowerChar;
-
-    keyDiv.appendChild(upperDiv);
-    keyDiv.appendChild(lowerDiv);
+    keyDiv.appendChild(char1Div);
+    keyDiv.appendChild(char2Div);
     rowDiv.appendChild(keyDiv);
   });
   kbContainer.appendChild(rowDiv);
 });
+
 
 
 document.getElementById('main').appendChild(kbContainer);
@@ -94,33 +136,36 @@ function getMaxOccurrence(occurrences) {
 function colorKeysByOccurrence(charCounts) {
   const maxOccurrence = getMaxOccurrence(charCounts);
 
-  kbLayout.flat().forEach(char => {
-    const upperChar = char.toUpperCase();
-    const lowerChar = char.toLowerCase();
+  kbLayout.forEach(row => {
+    row.forEach(key => {
+      const char1 = key.char1;
+      const char2 = key.char2;
 
-    const upperCount = charCounts[upperChar] || 0;
-    const lowerCount = charCounts[lowerChar] || 0;
+      const count1 = charCounts[char1] || 0;
+      const count2 = charCounts[char2] || 0;
 
-    const upperIntensity = upperCount === 0 ? 255 : Math.floor(255 * (1 - (upperCount / maxOccurrence)));
-    const lowerIntensity = lowerCount === 0 ? 255 : Math.floor(255 * (1 - (lowerCount / maxOccurrence)));
+      const intensity1 = count1 === 0 ? 255 : Math.floor(255 * (1 - (count1 / maxOccurrence)));
+      const intensity2 = count2 === 0 ? 255 : Math.floor(255 * (1 - (count2 / maxOccurrence)));
 
-    const upperColorValue = `rgb(${upperIntensity},${upperIntensity},${upperIntensity})`;
-    const lowerColorValue = `rgb(${lowerIntensity},${lowerIntensity},${lowerIntensity})`;
+      const colorValue1 = `rgb(${intensity1},${intensity1},${intensity1})`;
+      const colorValue2 = `rgb(${intensity2},${intensity2},${intensity2})`;
 
-    const upperDiv = document.getElementById(encodeCharForId(upperChar));
-    const lowerDiv = document.getElementById(encodeCharForId(lowerChar));
+      const char1Div = document.getElementById(encodeCharForId(char1));
+      const char2Div = document.getElementById(encodeCharForId(char2));
 
-    if (upperDiv) { 
-      upperDiv.style.backgroundColor = upperColorValue;
-      upperDiv.style.color = upperIntensity < 128 ? 'white' : 'black';
-    }
-    
-    if (lowerDiv) { 
-      lowerDiv.style.backgroundColor = lowerColorValue;
-      lowerDiv.style.color = lowerIntensity < 128 ? 'white' : 'black';
-    }
+      if (char1Div) {
+        char1Div.style.backgroundColor = colorValue1;
+        char1Div.style.color = intensity1 < 128 ? 'white' : 'black';
+      }
+
+      if (char2Div) {
+        char2Div.style.backgroundColor = colorValue2;
+        char2Div.style.color = intensity2 < 128 ? 'white' : 'black';
+      }
+    });
   });
 }
+
 
 
 //#endregion
