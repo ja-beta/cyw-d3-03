@@ -1,0 +1,37 @@
+#wrapper{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .keyboard-row {
+    display: flex;
+  }
+
+  .keyboard-key {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    margin: 2px;
+    border: 1px solid #ccc; /* Add a border for clarity */
+    background-color: #f0f0f0; /* Default background for the key */
+  }
+  
+  .upper-case, .lower-case {
+    width: 100%;
+    text-align: center;
+    user-select: none;
+  }
+  
+  .upper-case {
+    border-bottom: 1px solid #ccc; /* Visual separation */
+  }
+  
+  
