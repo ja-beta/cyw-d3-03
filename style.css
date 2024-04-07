@@ -17,7 +17,8 @@
 
 .keyboard {
     display: flex;
-    margin-top: 48px;
+    margin-top: 32px;
+    margin-bottom: 96px;
     flex-direction: column;
     align-items: center;
     gap: 8px;

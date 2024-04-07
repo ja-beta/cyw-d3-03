@@ -37,7 +37,8 @@ d3.csv("assets/passwords.csv").then
     const firstChars = countFirstChar(words);
     console.log(firstChars);
 
-    colorKeysByOccurrence(charOccurrences);
+    createKeyboard('kbOne', charOccurrences);
+    createKeyboard('kbTwo', firstChars);
 
 
   });
@@ -96,35 +97,41 @@ const kbLayout = [
 
 ];
 
-const kbContainer = document.createElement('div');
-kbContainer.className = 'keyboard';
 
-kbLayout.forEach(row => {
-  const rowDiv = document.createElement('div');
-  rowDiv.className = 'keyboard-row';
-  row.forEach(key => {
-    const keyDiv = document.createElement('div');
-    const char1Div = document.createElement('div');
-    const char2Div = document.createElement('div');
+function createKeyboard(containerId, charCounts) {
+  const kbContainer = document.createElement('div');
+  kbContainer.className = 'keyboard';
 
-    keyDiv.className = 'keyboard-key';
-    char1Div.className = 'char1';
-    char2Div.className = 'char2';
+  // Moved the keyboard creation logic inside this function
+  kbLayout.forEach(row => {
+      const rowDiv = document.createElement('div');
+      rowDiv.className = 'keyboard-row';
+      row.forEach(key => {
+          const keyDiv = document.createElement('div');
+          const char1Div = document.createElement('div');
+          const char2Div = document.createElement('div');
 
-    char1Div.id = encodeCharForId(key.char1);
-    char2Div.id = encodeCharForId(key.char2);
+          keyDiv.className = 'keyboard-key';
+          char1Div.className = 'char1';
+          char2Div.className = 'char2';
 
-    char1Div.textContent = key.char1;
-    char2Div.textContent = key.char2;
+          char1Div.id = encodeCharForId(key.char1);
+          char2Div.id = encodeCharForId(key.char2);
 
-    keyDiv.appendChild(char1Div);
-    keyDiv.appendChild(char2Div);
-    rowDiv.appendChild(keyDiv);
+          char1Div.textContent = key.char1;
+          char2Div.textContent = key.char2;
+
+          keyDiv.appendChild(char1Div);
+          keyDiv.appendChild(char2Div);
+          rowDiv.appendChild(keyDiv);
+      });
+      kbContainer.appendChild(rowDiv);
   });
-  kbContainer.appendChild(rowDiv);
-});
 
-document.getElementById('main').appendChild(kbContainer);
+  document.getElementById(containerId).appendChild(kbContainer);
+
+  colorKeysByOccurrence(charCounts, kbContainer);
+}
 
 
 function getMaxOccurrence(occurrences) {
@@ -136,46 +143,46 @@ function encodeCharForId(char) {
 }
 
 
-function colorKeysByOccurrence(charCounts) {
+function colorKeysByOccurrence(charCounts, kbContainer) {
   const maxOccurrence = getMaxOccurrence(charCounts);
+  const colorScale = d3.scaleSequential(d3.interpolateOrRd).domain([0, maxOccurrence]);
 
-  // const colorScale = d3.scaleSequential()
-  //   .domain([0, getMaxOccurrence(charCounts)])
-  //   .interpolator(d3.interpolateBlues);
+  kbContainer.querySelectorAll('.keyboard-key').forEach(keyDiv => {
+      const char1Div = keyDiv.querySelector('.char1');
+      const char2Div = keyDiv.querySelector('.char2');
 
-  const colorScale = d3.scaleSequential(d3.interpolateOrRd)
-  .domain([0, getMaxOccurrence(charCounts)]);
+      const char1 = char1Div.textContent;
+      const char2 = char2Div.textContent;
 
-  kbLayout.forEach(row => {
-    row.forEach(key => {
-      const char1 = key.char1;
-      const char2 = key.char2;
       const count1 = charCounts[char1] || 0;
       const count2 = charCounts[char2] || 0;
 
       const color1 = colorScale(count1);
       const color2 = colorScale(count2);
 
-      const intensity1 = count1 === 0 ? 255 : Math.floor(255 * (1 - (count1 / maxOccurrence)));
-      const intensity2 = count2 === 0 ? 255 : Math.floor(255 * (1 - (count2 / maxOccurrence)));
-      // const colorValue1 = `rgb(${intensity1},${intensity1},${intensity1})`;
-      // const colorValue2 = `rgb(${intensity2},${intensity2},${intensity2})`;
+      char1Div.style.backgroundColor = color1;
+      char2Div.style.backgroundColor = color2;
 
-      const char1Div = document.getElementById(encodeCharForId(char1));
-      const char2Div = document.getElementById(encodeCharForId(char2));
-
-      if (char1Div) {
-        char1Div.style.backgroundColor = color1;
-        char1Div.style.color = intensity1 < 128 ? 'white' : 'black';
-      }
-
-      if (char2Div) {
-        char2Div.style.backgroundColor = color2;
-        char2Div.style.color = intensity2 < 128 ? 'white' : 'black';
-      }
-    });
+      char1Div.style.color = getBrightness(color1) > 127 ? 'black' : 'white';
+      char2Div.style.color = getBrightness(color2) > 127 ? 'black' : 'white';
   });
 }
+
+
+function getBrightness(rgbColor) {
+  const matches = rgbColor.match(/\d+/g);
+  if (matches) {
+      const r = parseInt(matches[0]);
+      const g = parseInt(matches[1]);
+      const b = parseInt(matches[2]);
+      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      return brightness;
+  }
+  return 0; 
+}
+
+
+
 //#endregion
 
 
