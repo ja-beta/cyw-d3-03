@@ -4,11 +4,25 @@
     justify-content: center;
 }
 
+#main{
+    margin: 48px 5vw;
+}
+
+.headline{
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 500;
+    font-size: 20px;
+    text-align: center;
+}
+
 .keyboard {
     display: flex;
+    margin-top: 48px;
     flex-direction: column;
     align-items: center;
     gap: 8px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 400;
   }
 
   .keyboard-row {
@@ -22,21 +36,21 @@
     justify-content: center;
     align-items: stretch;
     overflow: hidden;
-    border: 1px solid #ccc; 
+    border: 1px solid #000000; 
     border-radius: 4px;
     background-color: #f0f0f0; 
   }
   
   .char1, .char2 {
-    width: 32px;
+    width: 40px;
     text-align: center;
     user-select: none;
-    padding: 2px 8px;
-    font-size: 15px;
+    padding: 2px 4px;
+    font-size: 17px;
   }
   
   .char2 {
-    border-bottom: 1px solid #ccc; 
+    border-bottom: 1px solid #000000; 
   }
   
   
