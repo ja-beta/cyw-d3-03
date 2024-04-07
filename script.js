@@ -102,7 +102,6 @@ function createKeyboard(containerId, charCounts) {
   const kbContainer = document.createElement('div');
   kbContainer.className = 'keyboard';
 
-  // Moved the keyboard creation logic inside this function
   kbLayout.forEach(row => {
     const rowDiv = document.createElement('div');
     rowDiv.className = 'keyboard-row';
