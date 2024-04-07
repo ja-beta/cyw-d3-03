@@ -104,28 +104,28 @@ function createKeyboard(containerId, charCounts) {
 
   // Moved the keyboard creation logic inside this function
   kbLayout.forEach(row => {
-      const rowDiv = document.createElement('div');
-      rowDiv.className = 'keyboard-row';
-      row.forEach(key => {
-          const keyDiv = document.createElement('div');
-          const char1Div = document.createElement('div');
-          const char2Div = document.createElement('div');
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'keyboard-row';
+    row.forEach(key => {
+      const keyDiv = document.createElement('div');
+      const char1Div = document.createElement('div');
+      const char2Div = document.createElement('div');
 
-          keyDiv.className = 'keyboard-key';
-          char1Div.className = 'char1';
-          char2Div.className = 'char2';
+      keyDiv.className = 'keyboard-key';
+      char1Div.className = 'char1';
+      char2Div.className = 'char2';
 
-          char1Div.id = encodeCharForId(key.char1);
-          char2Div.id = encodeCharForId(key.char2);
+      char1Div.id = encodeCharForId(key.char1);
+      char2Div.id = encodeCharForId(key.char2);
 
-          char1Div.textContent = key.char1;
-          char2Div.textContent = key.char2;
+      char1Div.textContent = key.char1;
+      char2Div.textContent = key.char2;
 
-          keyDiv.appendChild(char1Div);
-          keyDiv.appendChild(char2Div);
-          rowDiv.appendChild(keyDiv);
-      });
-      kbContainer.appendChild(rowDiv);
+      keyDiv.appendChild(char1Div);
+      keyDiv.appendChild(char2Div);
+      rowDiv.appendChild(keyDiv);
+    });
+    kbContainer.appendChild(rowDiv);
   });
 
   document.getElementById(containerId).appendChild(kbContainer);
@@ -145,40 +145,44 @@ function encodeCharForId(char) {
 
 function colorKeysByOccurrence(charCounts, kbContainer) {
   const maxOccurrence = getMaxOccurrence(charCounts);
-  const colorScale = d3.scaleSequential(d3.interpolateOrRd).domain([0, maxOccurrence]);
+  // const colorScale = d3.scaleSequential(d3.interpolateOrRd).domain([0, maxOccurrence]);
+  const colorScale = d3.scaleQuantize()
+    .domain([0, maxOccurrence])
+    .range(d3.schemePuBuGn[9]);
 
   kbContainer.querySelectorAll('.keyboard-key').forEach(keyDiv => {
-      const char1Div = keyDiv.querySelector('.char1');
-      const char2Div = keyDiv.querySelector('.char2');
+    const char1Div = keyDiv.querySelector('.char1');
+    const char2Div = keyDiv.querySelector('.char2');
 
-      const char1 = char1Div.textContent;
-      const char2 = char2Div.textContent;
+    const char1 = char1Div.textContent;
+    const char2 = char2Div.textContent;
 
-      const count1 = charCounts[char1] || 0;
-      const count2 = charCounts[char2] || 0;
+    const count1 = charCounts[char1] || 0;
+    const count2 = charCounts[char2] || 0;
 
-      const color1 = colorScale(count1);
-      const color2 = colorScale(count2);
+    const color1 = colorScale(count1);
+    const color2 = colorScale(count2);
 
-      char1Div.style.backgroundColor = color1;
-      char2Div.style.backgroundColor = color2;
+    char1Div.style.backgroundColor = color1;
+    char2Div.style.backgroundColor = color2;
 
-      char1Div.style.color = getBrightness(color1) > 127 ? 'black' : 'white';
-      char2Div.style.color = getBrightness(color2) > 127 ? 'black' : 'white';
+    char1Div.style.color = getBrightness(color1) > 127 ? 'black' : 'white';
+    char2Div.style.color = getBrightness(color2) > 127 ? 'black' : 'white';
   });
 }
 
 
-function getBrightness(rgbColor) {
-  const matches = rgbColor.match(/\d+/g);
-  if (matches) {
-      const r = parseInt(matches[0]);
-      const g = parseInt(matches[1]);
-      const b = parseInt(matches[2]);
-      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-      return brightness;
-  }
-  return 0; 
+function getBrightness(color) {
+
+  const r = parseInt(color.substr(1, 2), 16);
+  const g = parseInt(color.substr(3, 2), 16);
+  const b = parseInt(color.substr(5, 2), 16);
+
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+  console.log(brightness);
+  return brightness;
+
 }
 
 
