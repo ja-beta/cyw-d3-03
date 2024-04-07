@@ -179,7 +179,7 @@ function getBrightness(color) {
 
   const brightness = (r * 299 + g * 587 + b * 114) / 1000;
 
-  console.log(brightness);
+  // console.log(brightness);
   return brightness;
 
 }
